@@ -18,8 +18,8 @@ fn main() {
         Ok(_) => {},
     };
 
-    let mut instruction_pointer = 0usize;
-    let mut tape_pointer = 0usize;
+    let mut register_pointer = 0usize;
+    let mut code_pointer = 0usize;
     #[derive(Debug)]
     let mut code = Vec::new();
     let mut inloop_vec: Vec<usize> = Vec::new();
@@ -31,29 +31,29 @@ fn main() {
 
     //println!("{:?}", code);
     loop {
-        match code[tape_pointer] {
-            '<' => if instruction_pointer != 0 {
-                instruction_pointer -= 1;
+        match code[code_pointer] {
+            '<' => if register_pointer != 0 {
+                register_pointer -= 1;
             },
-            '>' => instruction_pointer += 1,
-            '+' => register[instruction_pointer] += 1,
-            '-' => register[instruction_pointer] -= 1,
-            '.' => print!("{}", to_ascii(&register[instruction_pointer])),
-            '[' => inloop_vec.push(tape_pointer),
+            '>' => register_pointer += 1,
+            '+' => register[register_pointer] += 1,
+            '-' => register[register_pointer] -= 1,
+            '.' => print!("{}", to_ascii(&register[register_pointer])),
+            '[' => inloop_vec.push(code_pointer),
             ']' => {
                 if inloop_vec.is_empty() {
                     println!("ERROR: UNKNOWN LOOP CLOSING!");
                     break;
-                } else if register[instruction_pointer] != 0 {
-                    tape_pointer = *inloop_vec.last().unwrap();
+                } else if register[register_pointer] != 0 {
+                    code_pointer = *inloop_vec.last().unwrap();
                 } else {
                     inloop_vec.pop();
                 }
             },
             _ => { },
         }
-        tape_pointer += 1;
-        if tape_pointer == code.len() {
+        code_pointer += 1;
+        if code_pointer == code.len() {
             return
         }
         //println!("{:?}", register)
