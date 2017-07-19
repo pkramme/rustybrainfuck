@@ -41,10 +41,7 @@ fn main() {
             '.' => print!("{}", to_ascii(&register[register_pointer])),
             '[' => inloop_vec.push(code_pointer),
             ']' => {
-                if inloop_vec.is_empty() {
-                    println!("ERROR: UNKNOWN LOOP CLOSING!");
-                    break;
-                } else if register[register_pointer] != 0 {
+                if register[register_pointer] != 0 {
                     code_pointer = *inloop_vec.last().unwrap();
                 } else {
                     inloop_vec.pop();
@@ -56,7 +53,7 @@ fn main() {
         if code_pointer == code.len() {
             return
         }
-        //println!("{:?}", register)
+        println!("{:?} pointerloc {}", register, register_pointer)
     }
     
 }
