@@ -17,30 +17,47 @@ fn main() {
         Err(why) => panic!("{}", why.description()),
         Ok(_) => {},
     };
-    //println!("{}", content);
-    // Now that the file is loaded, lets create the array for brainfuck
-    
-    let mut brainfuck_register: [i32;32] = [0;32];
-    let mut pointer = 0;
 
+    let mut instruction_pointer = 0usize;
+    let mut tape_pointer = 0usize;
+    #[derive(Debug)]
+    let mut code = Vec::new();
+    let mut inloop_vec: Vec<usize> = Vec::new();
+    let mut register: [i32;32] = [0;32];
     for c in content.chars() {
-        if c == '>' {
-            pointer = pointer + 1;
-            //println!(">")
-        } else if c == '<' {
-            pointer = pointer - 1;
-            //println!("<")
-        } else if c == '+' {
-            brainfuck_register[pointer] = brainfuck_register[pointer] + 1;
-            //println!("+")
-        } else if c == '-' {
-            brainfuck_register[pointer] = brainfuck_register[pointer] - 1;
-            //println!("-")
-        } else if c == ',' {
-            print!("{}", to_ascii(&brainfuck_register[pointer]))
-        }
+        code.push(c);
+        //println!("{}", c);
     }
-    //println!("{:?}", brainfuck_register)
+
+    //println!("{:?}", code);
+    loop {
+        match code[tape_pointer] {
+            '<' => if instruction_pointer != 0 {
+                instruction_pointer -= 1;
+            },
+            '>' => instruction_pointer += 1,
+            '+' => register[instruction_pointer] += 1,
+            '-' => register[instruction_pointer] -= 1,
+            '.' => print!("{}", to_ascii(&register[instruction_pointer])),
+            '[' => inloop_vec.push(tape_pointer),
+            ']' => {
+                if inloop_vec.is_empty() {
+                    println!("ERROR: UNKNOWN LOOP CLOSING!");
+                    break;
+                } else if register[instruction_pointer] != 0 {
+                    tape_pointer = *inloop_vec.last().unwrap();
+                } else {
+                    inloop_vec.pop();
+                }
+            },
+            _ => { },
+        }
+        tape_pointer += 1;
+        if tape_pointer == code.len() {
+            return
+        }
+        //println!("{:?}", register)
+    }
     
 }
 
@@ -50,3 +67,5 @@ fn to_ascii(i: &i32) -> String {
         _ => "".into(),
     }
 }
+
+// print!("{}", to_ascii(&brainfuck_register[pointer]))
