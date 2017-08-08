@@ -77,5 +77,3 @@ fn to_ascii(i: &i32) -> String {
         _ => "".into(),
     }
 }
-
-// print!("{}", to_ascii(&brainfuck_register[pointer]))
