@@ -24,7 +24,7 @@ fn main() {
     let mut code = Vec::new();
     let mut inloop_vec: Vec<usize> = Vec::new();
     
-    let mut register = vec![0;1000];
+    let mut register = vec![0;1];
     for c in content.chars() {
         match c {
             '<' | '>' | '+' | '-' | '.' | '[' | ']' => code.push(c),
@@ -44,7 +44,12 @@ fn main() {
             '<' => if register_pointer != 0 {
                 register_pointer -= 1;
             },
-            '>' => register_pointer += 1,
+            '>' => {
+                if register.len() -1 == register_pointer {
+                    register.push(0);
+                }
+                register_pointer += 1;
+                },
             '+' => register[register_pointer] += 1,
             '-' => register[register_pointer] -= 1,
             '.' => print!("{}", to_ascii(&register[register_pointer])),
@@ -62,7 +67,6 @@ fn main() {
         if code_pointer == code.len() {
             return
         }
-        //println!("");
     }
     
 }
